@@ -9,6 +9,8 @@ import org.springframework.web.servlet.ModelAndView;
 public class ExceptionControllerAdvice {
 
 
+全额问问去额
+
     // 处理返回错误页面
     @ExceptionHandler(value = {Exception.class})
     public ModelAndView myExceptionToPage(Exception e){
