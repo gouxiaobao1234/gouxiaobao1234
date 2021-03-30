@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        https://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/mvc
+        https://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/context
+        https://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!-- 配置扫描包  -->
+    <context:component-scan base-package="cn.chao"/>
+
+    <!-- 配置视图解析器,作用是配置目录前缀和文件后缀，然后解析为一个资源文件 -->
+    <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/WEB-INF/jsp/"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
+
+    <mvc:annotation-driven/>
+
+    <bean id="conversionService" class="org.springframework.context.support.ConversionServiceFactoryBean">
+        <property name="converters">
+            <set>
+                <bean class="cn.chao.controller.String2DateConverter"/>
+            </set>
+        </property>
+    </bean>
+    <mvc:annotation-driven conversion-service="conversionService"/>
+    <mvc:resources mapping="/js/**" location="/js/"/>
+    <mvc:default-servlet-handler/>
+    <mvc:annotation-driven/>
+    <mvc:view-controller path="/wenjian" view-name="wenjian"/>
+
+    <bean id="multipartResolver" 	class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="maxUploadSize" value="#{1024*1024*10}"/>
+    </bean>
+    <bean id="myExceptionResolver" class="cn.chao.exception.MyExceptionResolver"/>
+
+    <!--单个拦截器-->
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/**"/>
+            <bean class="cn.chao.interceptor.MyInterceptor1"/>
+        </mvc:interceptor>
+    </mvc:interceptors>
+
+    <!--多个拦截器-->
+    <!--谁在前先运行谁-->
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/**"/>
+            <bean class="cn.chao.interceptor.MyInterceptor1"/>
+        </mvc:interceptor>
+        <mvc:interceptor>
+            <mvc:mapping path="/**"/>
+            <bean class="cn.chao.interceptor.MyInterceptor2"/>
+        </mvc:interceptor>
+    </mvc:interceptors>
+
+    <!--反正都是拦截直接用-->
+<!--    <mvc:interceptors>-->
+<!--        <bean class="cn.chao.interceptor.MyInterceptor1"/>-->
+<!--        <bean class="cn.chao.interceptor.MyInterceptor2"/>-->
+<!--    </mvc:interceptors>-->
+</beans>
